@@ -4,7 +4,6 @@ project(leetcode)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_compile_definitions(STDIN_FILE_PATH="${CMAKE_SOURCE_DIR}/stdin.txt")
 add_compile_definitions(LOCAL_ENV_LEETCODE)
 
 # basic include
@@ -16,4 +15,3 @@ foreach (dirpath ${BASIC_INCLUDE_DIR})
 endforeach ()
 
 add_subdirectory(question)
-add_subdirectory(algorithm)

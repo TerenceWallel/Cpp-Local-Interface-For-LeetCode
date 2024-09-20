@@ -16,9 +16,7 @@
 #include <algorithm>
 
 // Leetcode IO
-#ifdef LOCAL_ENV_LEETCODE
 #include "readio.hpp"
-#endif
 
 using namespace std;
 
@@ -73,18 +71,19 @@ int main() {
 
     // Read Data
     auto data = readFile(getDirByPath(__FILE__, STDIN_FILE_NAME));
+    int max_loop = data.size() / function_input_type::nargs;
 
-    for (int loop = 0; loop < data.size() / function_input_type::nargs; loop++)
-    {
+    for (int loop = 0; loop < max_loop; loop++) {
         function_input_type::input_tuple_type mark;
-        if constexpr (std::is_same_v<void, function_input_type::result_type>)
-        {
+        if constexpr (std::is_same_v<void, function_input_type::result_type>) {
             callFunction(Solution::FunctionName, callReadIO(data, mark));
-        }
-        else
-        {
+        } else {
             auto output = callFunction(Solution::FunctionName, callReadIO(data, mark));
+
+            nlohmann::json output_json = output;
+            cout << output_json.dump() << endl;
         }
+
     }
 
     return 0;

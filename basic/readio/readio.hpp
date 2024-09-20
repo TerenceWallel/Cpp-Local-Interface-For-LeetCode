@@ -11,13 +11,14 @@
 #include "json_fwd.hpp"
 
 template<typename T>
-void readIO(std::vector<std::string> data, T &arg) {
+void readIO(std::vector<std::string> &data, T &arg) {
     auto json_message = nlohmann::json::parse(data.at(0));
     arg = json_message.get<T>();
+    data.erase(data.begin());
 }
 
 template<typename T, typename... Types>
-void readIO(std::vector<std::string> data, T &first_arg, Types &... args) {
+void readIO(std::vector<std::string> &data, T &first_arg, Types &... args) {
     std::string message = data.at(0);
     data.erase(data.begin());
 
@@ -27,7 +28,7 @@ void readIO(std::vector<std::string> data, T &first_arg, Types &... args) {
     readIO(data, args...);
 }
 
-std::vector<std::string> readFile(const std::string &path = STDIN_FILE_PATH) {
+std::vector<std::string> readFile(const std::string &path) {
     std::fstream file(path, std::ios::in);
     std::vector<std::string> output;
 
@@ -41,12 +42,12 @@ std::vector<std::string> readFile(const std::string &path = STDIN_FILE_PATH) {
 }
 
 template<size_t... Is, typename... Args>
-void callReadIOHelper(std::vector<std::string> data, std::index_sequence<Is...>, std::tuple<Args...> &tp) {
+void callReadIOHelper(std::vector<std::string> &data, std::index_sequence<Is...>, std::tuple<Args...> &tp) {
     readIO(data, std::get<Is>(tp)...);
 }
 
 template<typename... Args>
-auto callReadIO(std::vector<std::string> data, std::tuple<Args...> &tp) {
+auto callReadIO(std::vector<std::string> &data, std::tuple<Args...> &tp) {
     callReadIOHelper(data, std::make_index_sequence<sizeof...(Args)>(), tp);
     return tp;
 }
@@ -72,7 +73,7 @@ struct function_traits<std::function<R(Args...)>> {
     // 返回类型
     typedef R result_type;
 
-    typedef std::tuple<remove_reference<Args>::type...> input_tuple_type;
+    typedef std::tuple<std::remove_reference_t<Args>...> input_tuple_type;
 
     // 输入参数类型,i为从0开始的参数类型索引
     template<size_t i>
