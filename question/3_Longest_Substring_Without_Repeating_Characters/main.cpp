@@ -39,11 +39,24 @@ public:
 /*--------------------------------------------*/
 
 int main() {
+#define STDIN_FILE_NAME "stdin.in"
+    typedef function_traits<std::function<decltype(Solution::FunctionName)>> function_input_type;
 
-    typedef function_traits <std::function<decltype(Solution::FunctionName)>> function_input_type;
-    function_input_type::input_tuple_type mark;
+    // Read Data
+    auto data = readFile(getDirByPath(__FILE__, STDIN_FILE_NAME));
 
-    auto answer = callFunction(Solution::FunctionName, callReadIO(readFile(), mark));
+    for (int loop = 0; loop < data.size() / function_input_type::nargs; loop++)
+    {
+        function_input_type::input_tuple_type mark;
+        if constexpr (std::is_same_v<void, function_input_type::result_type>)
+        {
+            callFunction(Solution::FunctionName, callReadIO(data, mark));
+        }
+        else
+        {
+            auto output = callFunction(Solution::FunctionName, callReadIO(data, mark));
+        }
+    }
 
     return 0;
 }

@@ -72,7 +72,7 @@ struct function_traits<std::function<R(Args...)>> {
     // 返回类型
     typedef R result_type;
 
-    typedef std::tuple<Args...> input_tuple_type;
+    typedef std::tuple<remove_reference<Args>::type...> input_tuple_type;
 
     // 输入参数类型,i为从0开始的参数类型索引
     template<size_t i>
